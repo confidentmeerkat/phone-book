@@ -5,6 +5,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -14,8 +15,37 @@ export type Scalars = {
   Float: number;
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  createPhone?: Maybe<Phone>;
+  deletePhone?: Maybe<Scalars['String']>;
+  updatePhone?: Maybe<Phone>;
+};
+
+
+export type MutationCreatePhoneArgs = {
+  input: PhoneInput;
+};
+
+
+export type MutationDeletePhoneArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationUpdatePhoneArgs = {
+  id: Scalars['ID'];
+  input: PhoneInput;
+};
+
 export type Phone = {
   __typename?: 'Phone';
+  id?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+  number: Scalars['String'];
+};
+
+export type PhoneInput = {
   name: Scalars['String'];
   number: Scalars['String'];
 };
@@ -96,7 +126,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  Mutation: ResolverTypeWrapper<{}>;
   Phone: ResolverTypeWrapper<Phone>;
+  PhoneInput: PhoneInput;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
 };
@@ -104,12 +137,22 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  ID: Scalars['ID'];
+  Mutation: {};
   Phone: Phone;
+  PhoneInput: PhoneInput;
   Query: {};
   String: Scalars['String'];
 };
 
+export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createPhone?: Resolver<Maybe<ResolversTypes['Phone']>, ParentType, ContextType, RequireFields<MutationCreatePhoneArgs, 'input'>>;
+  deletePhone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeletePhoneArgs, 'id'>>;
+  updatePhone?: Resolver<Maybe<ResolversTypes['Phone']>, ParentType, ContextType, RequireFields<MutationUpdatePhoneArgs, 'id' | 'input'>>;
+};
+
 export type PhoneResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Phone'] = ResolversParentTypes['Phone']> = {
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -121,6 +164,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
 };
 
 export type Resolvers<ContextType = Context> = {
+  Mutation?: MutationResolvers<ContextType>;
   Phone?: PhoneResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 };

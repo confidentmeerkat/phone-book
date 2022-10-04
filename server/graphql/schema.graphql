@@ -4,7 +4,19 @@ type Query {
     book: [Phone]
 }
 
+type Mutation {
+    createPhone(input: PhoneInput!): Phone
+    updatePhone(id: ID!, input:PhoneInput!): Phone
+    deletePhone(id: ID!): String
+}
+
 type Phone {
+    id: ID
+    name: String!
+    number: String!
+}
+
+input PhoneInput {
     name: String!
     number: String!
 }
