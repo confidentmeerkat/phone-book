@@ -1,7 +1,7 @@
 
 type Query {
     test: String
-    book: [Phone]
+    phones: [Phone]
 }
 
 type Mutation {

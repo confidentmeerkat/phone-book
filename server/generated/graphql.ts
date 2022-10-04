@@ -52,7 +52,7 @@ export type PhoneInput = {
 
 export type Query = {
   __typename?: 'Query';
-  book?: Maybe<Array<Maybe<Phone>>>;
+  phones?: Maybe<Array<Maybe<Phone>>>;
   test?: Maybe<Scalars['String']>;
 };
 
@@ -159,7 +159,7 @@ export type PhoneResolvers<ContextType = Context, ParentType extends ResolversPa
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  book?: Resolver<Maybe<Array<Maybe<ResolversTypes['Phone']>>>, ParentType, ContextType>;
+  phones?: Resolver<Maybe<Array<Maybe<ResolversTypes['Phone']>>>, ParentType, ContextType>;
   test?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 
