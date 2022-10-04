@@ -1,0 +1,10 @@
+
+type Query {
+    test: String
+    book: [Phone]
+}
+
+type Phone {
+    name: String!
+    number: String!
+}

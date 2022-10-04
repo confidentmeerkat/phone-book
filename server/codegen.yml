@@ -1,0 +1,13 @@
+overwrite: true
+schema:
+  './**/*.graphql':
+    noRequire: true
+documents: null
+generates:
+  generated/graphql.ts:
+    config:
+      contextType: ../app#Context
+    plugins:
+      # - add: '/* tslint:disable */'
+      - 'typescript'
+      - 'typescript-resolvers'
