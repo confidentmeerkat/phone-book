@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Button,
   Container,
@@ -17,44 +17,89 @@ import ContactFormDialog, {
   Contact,
   SubmitFunction,
 } from "./ContactFormDialog";
-
-const sampleData = [
-  {
-    id: "1",
-    firstname: "Eric",
-    lastname: "Elliot",
-    number: "123-123-123",
-  },
-  {
-    id: "2",
-    firstname: "Bill",
-    lastname: "Gates",
-    number: "233-521-2315",
-  },
-];
+import {
+  useContactsQuery,
+  useCreateContactMutation,
+  useUpdateContactMutation,
+} from "./graphql/generates";
+import { useQueryClient } from "@tanstack/react-query";
 
 function App() {
   const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [initialInput, setInitialInput] = useState<Contact>();
+  
+  const queryClient = useQueryClient();
+  const { data: contactsData, isFetching } = useContactsQuery();
+  const {
+    mutate: createContract,
+  } = useCreateContactMutation();
+  const { mutate: updateContact } = useUpdateContactMutation();
 
-  const handleCreateContact: SubmitFunction = useCallback((data: Contact) => {
-    setDialogOpen(false);
-  }, [setDialogOpen]);
+  const handleCreateContact: SubmitFunction = useCallback(
+    async (data: Contact) => {
+      await createContract(
+        { input: data },
+        {
+          onSuccess: (data) => {
+            queryClient.setQueryData(["Contacts"], ({ contacts }: any) => {
+              return { contacts: [...contacts, data.createContact] };
+            });
+          },
+        }
+      );
+      setDialogOpen(false);
+    },
+    [setDialogOpen, createContract]
+  );
 
-  const handleUpdateContact: SubmitFunction = useCallback((data: Contact) => {
-    setDialogOpen(false);
-  }, [setDialogOpen]);
+  const handleUpdateContact: SubmitFunction = useCallback(
+    async (data: Contact) => {
+      const { id, ...rest } = data;
+      if (id) {
+        await updateContact(
+          { id, input: rest },
+          {
+            onSuccess: (data) => {
+              queryClient.setQueryData(["Contacts"], ({ contacts }: any) => {
+                return {
+                  contacts: contacts.map((contact: any) => {
+                    if (contact.id === id) {
+                      return data.updateContact;
+                    }
+
+                    return contact;
+                  }),
+                };
+              });
+            },
+          }
+        );
+      }
+
+      setDialogOpen(false);
+    },
+    [setDialogOpen]
+  );
 
   const handleAddClicked = () => {
     setHandleSubmit(() => handleCreateContact);
+    setInitialInput({firstname: "", lastname: "", number: ""});
     setDialogOpen(true);
   };
 
-  const handleUpdateClicked = useCallback((id: string) => {
-    setHandleSubmit(() => handleUpdateContact);
-    setInitialInput(sampleData.find(({id: itemId}) => itemId === id))
-    setDialogOpen(true);
-  }, [handleUpdateContact]);
+  const handleUpdateClicked = useCallback(
+    (id: string) => {
+      setHandleSubmit(() => handleUpdateContact);
+      setInitialInput(
+        (contactsData?.contacts || []).find(
+          (contact) => contact?.id === id
+        ) as Contact
+      );
+      setDialogOpen(true);
+    },
+    [handleUpdateContact]
+  );
 
   const [handleSubmit, setHandleSubmit] = useState<SubmitFunction>(
     () => handleCreateContact
@@ -64,11 +109,10 @@ function App() {
     setDialogOpen(false);
   };
 
-  const [initialInput, setInitialInput] = useState<Contact>();
 
   const items = useMemo(() => {
-    return sampleData.map(({ firstname, lastname, number, id }) => (
-      <Fragment key={id}>
+    return (contactsData?.contacts || []).map((contact) => (
+      <Fragment key={contact?.id}>
         <ListItem
           sx={{
             display: "flex",
@@ -77,7 +121,7 @@ function App() {
           }}
         >
           <ListItemText
-            primary={firstname + ' ' + lastname}
+            primary={contact?.firstname + " " + contact?.lastname}
             secondary={
               <Box
                 component="span"
@@ -90,7 +134,7 @@ function App() {
                   fontSize="small"
                   sx={{ marginRight: theme.spacing(1) }}
                 />{" "}
-                {number}
+                {contact?.number}
               </Box>
             }
           />
@@ -103,7 +147,7 @@ function App() {
               }}
               variant="contained"
               color="primary"
-              onClick={() => handleUpdateClicked(id)}
+              onClick={() => handleUpdateClicked(contact?.id as string)}
             >
               <Edit />
             </Button>
@@ -120,7 +164,7 @@ function App() {
         <Divider component="li" />
       </Fragment>
     ));
-  }, [theme, handleUpdateClicked]);
+  }, [theme, handleUpdateClicked, contactsData]);
 
   return (
     <div className="App">
@@ -160,17 +204,21 @@ function App() {
             placeholder="Search for contact by last name..."
           />
         </Box>
-        <List
-          sx={{
-            width: "100%",
-            border: "solid 1px lightgray",
-            borderRadius: "4px",
-            marginTop: theme.spacing(2),
-            padding: 0,
-          }}
-        >
-          {items}
-        </List>
+        {isFetching ? (
+          "Loading"
+        ) : (
+          <List
+            sx={{
+              width: "100%",
+              border: "solid 1px lightgray",
+              borderRadius: "4px",
+              marginTop: theme.spacing(2),
+              padding: 0,
+            }}
+          >
+            {items}
+          </List>
+        )}
         {dialogOpen && (
           <ContactFormDialog
             open={dialogOpen}

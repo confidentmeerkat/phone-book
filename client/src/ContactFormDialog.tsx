@@ -9,10 +9,10 @@ import {
 import { useForm } from "react-hook-form";
 
 export interface Contact {
-  id?: String;
-  firstname: String;
-  lastname: String;
-  number: String;
+  id?: string;
+  firstname: string;
+  lastname: string;
+  number: string;
 }
 
 export interface SubmitFunction {
@@ -38,7 +38,7 @@ const ContactFormDialog: React.FC<Props> = ({
   return (
     <Dialog open={open} onClose={onClose}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle>{initialInput? "Update" : "New"} Contact</DialogTitle>
+        <DialogTitle>{initialInput?.id? "Update" : "New"} Contact</DialogTitle>
         <DialogContent>
           <TextField margin="dense" label="First Name" {...register("firstname")} fullWidth />
           <TextField margin="dense" label="Last Name" {...register("lastname")} fullWidth />

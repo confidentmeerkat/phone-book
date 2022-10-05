@@ -1,0 +1,26 @@
+query Contacts {
+    contacts {
+        id
+        firstname
+        lastname
+        number
+    }
+}
+
+mutation CreateContact($input: ContactInput!) {
+    createContact(input: $input) {
+        id
+        firstname
+        lastname
+        number
+    }
+}
+
+mutation UpdateContact($id: ID!, $input: ContactInput!) {
+    updateContact(id: $id, input: $input) {
+        id
+        firstname
+        lastname
+        number
+    }
+}
