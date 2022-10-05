@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useMemo, useState } from "react";
 import {
   Button,
   Container,
@@ -50,7 +50,7 @@ function App() {
       );
       setDialogOpen(false);
     },
-    [setDialogOpen, createContact]
+    [setDialogOpen, createContact, queryClient]
   );
 
   const handleUpdateContact: SubmitFunction = useCallback(
@@ -79,7 +79,7 @@ function App() {
 
       setDialogOpen(false);
     },
-    [setDialogOpen]
+    [setDialogOpen, queryClient, updateContact]
   );
 
   const handleAddClicked = () => {
@@ -98,7 +98,7 @@ function App() {
       );
       setDialogOpen(true);
     },
-    [handleUpdateContact]
+    [handleUpdateContact, setInitialInput, setDialogOpen, contactsData]
   );
 
   const handleDeleteContact = useCallback((id: string) => {
@@ -112,7 +112,7 @@ function App() {
         },
       }
     );
-  }, []);
+  }, [queryClient, deleteContact]);
 
   const [handleSubmit, setHandleSubmit] = useState<SubmitFunction>(
     () => handleCreateContact
@@ -178,7 +178,7 @@ function App() {
         <Divider component="li" />
       </Fragment>
     ));
-  }, [theme, handleUpdateClicked, contactsData]);
+  }, [theme, handleUpdateClicked, contactsData, handleDeleteContact]);
 
   return (
     <div className="App">
