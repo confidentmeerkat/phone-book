@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { Fragment, useCallback, useMemo, useState } from "react";
 import {
   Button,
   Container,
@@ -12,25 +12,63 @@ import {
   useTheme,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { Search, Contacts, Delete, Phone } from "@mui/icons-material";
+import { Search, Contacts, Delete, Phone, Edit } from "@mui/icons-material";
+import ContactFormDialog, {
+  Contact,
+  SubmitFunction,
+} from "./ContactFormDialog";
 
 const sampleData = [
   {
-    name: "Eric Elliot",
+    id: "1",
+    firstname: "Eric",
+    lastname: "Elliot",
     number: "123-123-123",
   },
   {
-    name: "Bill Gates",
+    id: "2",
+    firstname: "Bill",
+    lastname: "Gates",
     number: "233-521-2315",
   },
 ];
 
 function App() {
   const theme = useTheme();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleCreateContact: SubmitFunction = useCallback((data: Contact) => {
+    setDialogOpen(false);
+  }, [setDialogOpen]);
+
+  const handleUpdateContact: SubmitFunction = useCallback((data: Contact) => {
+    setDialogOpen(false);
+  }, [setDialogOpen]);
+
+  const handleAddClicked = () => {
+    setHandleSubmit(() => handleCreateContact);
+    setDialogOpen(true);
+  };
+
+  const handleUpdateClicked = useCallback((id: string) => {
+    setHandleSubmit(() => handleUpdateContact);
+    setInitialInput(sampleData.find(({id: itemId}) => itemId === id))
+    setDialogOpen(true);
+  }, [handleUpdateContact]);
+
+  const [handleSubmit, setHandleSubmit] = useState<SubmitFunction>(
+    () => handleCreateContact
+  );
+
+  const handleClose = () => {
+    setDialogOpen(false);
+  };
+
+  const [initialInput, setInitialInput] = useState<Contact>();
 
   const items = useMemo(() => {
-    return sampleData.map(({ name, number }) => (
-      <>
+    return sampleData.map(({ firstname, lastname, number, id }) => (
+      <Fragment key={id}>
         <ListItem
           sx={{
             display: "flex",
@@ -39,22 +77,50 @@ function App() {
           }}
         >
           <ListItemText
-            primary={name}
+            primary={firstname + ' ' + lastname}
             secondary={
-              <Box mt={1} display="flex" flexDirection="row" alignItems="center">
-                <Phone fontSize="small" sx={{marginRight: theme.spacing(1)}} /> {number}
+              <Box
+                component="span"
+                mt={1}
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+              >
+                <Phone
+                  fontSize="small"
+                  sx={{ marginRight: theme.spacing(1) }}
+                />{" "}
+                {number}
               </Box>
             }
           />
-          <Button variant="contained" color="error">
-            <Delete />
-          </Button>
+          <Box>
+            <Button
+              sx={{
+                minWidth: "32px",
+                padding: theme.spacing(1, 1),
+                marginRight: theme.spacing(1),
+              }}
+              variant="contained"
+              color="primary"
+              onClick={() => handleUpdateClicked(id)}
+            >
+              <Edit />
+            </Button>
+            <Button
+              sx={{ minWidth: "32px", padding: theme.spacing(1, 1) }}
+              variant="contained"
+              color="error"
+            >
+              <Delete />
+            </Button>
+          </Box>
         </ListItem>
 
         <Divider component="li" />
-      </>
+      </Fragment>
     ));
-  }, []);
+  }, [theme, handleUpdateClicked]);
 
   return (
     <div className="App">
@@ -69,7 +135,6 @@ function App() {
           <Contacts fontSize="large" sx={{ marginRight: theme.spacing(2) }} />
           Phone Book App
         </Typography>
-
         <Box
           mt={6}
           width="100%"
@@ -78,9 +143,10 @@ function App() {
           flexDirection="row"
         >
           <Typography variant="h4">Contacts</Typography>
-          <Button variant="contained">Add Contact</Button>
+          <Button variant="contained" onClick={handleAddClicked}>
+            Add Contact
+          </Button>
         </Box>
-
         <Box mt={3} width="100%">
           <TextField
             fullWidth
@@ -94,18 +160,25 @@ function App() {
             placeholder="Search for contact by last name..."
           />
         </Box>
-
         <List
           sx={{
             width: "100%",
             border: "solid 1px lightgray",
             borderRadius: "4px",
             marginTop: theme.spacing(2),
-            padding:0
+            padding: 0,
           }}
         >
           {items}
         </List>
+        {dialogOpen && (
+          <ContactFormDialog
+            open={dialogOpen}
+            onSubmit={handleSubmit}
+            initialInput={initialInput}
+            onClose={handleClose}
+          />
+        )}
       </Container>
     </div>
   );
