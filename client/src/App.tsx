@@ -29,6 +29,7 @@ function App() {
   const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [initialInput, setInitialInput] = useState<Contact>();
+  const [filter, setFilter] = useState("");
 
   const queryClient = useQueryClient();
   const { data: contactsData, isFetching } = useContactsQuery();
@@ -123,7 +124,7 @@ function App() {
   };
 
   const items = useMemo(() => {
-    return (contactsData?.contacts || []).map((contact) => (
+    return (contactsData?.contacts || []).filter((contact) => contact?.lastname.toLocaleLowerCase().includes(filter.toLocaleLowerCase())).map((contact) => (
       <Fragment key={contact?.id}>
         <ListItem
           sx={{
@@ -178,7 +179,7 @@ function App() {
         <Divider component="li" />
       </Fragment>
     ));
-  }, [theme, handleUpdateClicked, contactsData, handleDeleteContact]);
+  }, [theme, handleUpdateClicked, contactsData, handleDeleteContact, filter]);
 
   return (
     <div className="App">
@@ -215,6 +216,8 @@ function App() {
                 </InputAdornment>
               ),
             }}
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
             placeholder="Search for contact by last name..."
           />
         </Box>
