@@ -18,7 +18,7 @@ const Mutation: MutationResolvers = {
     updateContact: async(_, args) => {
         const {id, input} = args;
 
-        return await Contact.findByIdAndUpdate(id, input);
+        return await Contact.findByIdAndUpdate(id, input, {new: true});
     },
     deleteContact: async(_, args) => {
         const {id} = args;
