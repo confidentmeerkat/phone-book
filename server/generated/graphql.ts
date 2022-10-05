@@ -15,44 +15,46 @@ export type Scalars = {
   Float: number;
 };
 
+export type Contact = {
+  __typename?: 'Contact';
+  firstname: Scalars['String'];
+  id?: Maybe<Scalars['ID']>;
+  lastname: Scalars['String'];
+  number: Scalars['String'];
+};
+
+export type ContactInput = {
+  firstname: Scalars['String'];
+  lastname: Scalars['String'];
+  number: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  createPhone?: Maybe<Phone>;
-  deletePhone?: Maybe<Scalars['String']>;
-  updatePhone?: Maybe<Phone>;
+  createContact?: Maybe<Contact>;
+  deleteContact?: Maybe<Scalars['String']>;
+  updateContact?: Maybe<Contact>;
 };
 
 
-export type MutationCreatePhoneArgs = {
-  input: PhoneInput;
+export type MutationCreateContactArgs = {
+  input: ContactInput;
 };
 
 
-export type MutationDeletePhoneArgs = {
+export type MutationDeleteContactArgs = {
   id: Scalars['ID'];
 };
 
 
-export type MutationUpdatePhoneArgs = {
+export type MutationUpdateContactArgs = {
   id: Scalars['ID'];
-  input: PhoneInput;
-};
-
-export type Phone = {
-  __typename?: 'Phone';
-  id?: Maybe<Scalars['ID']>;
-  name: Scalars['String'];
-  number: Scalars['String'];
-};
-
-export type PhoneInput = {
-  name: Scalars['String'];
-  number: Scalars['String'];
+  input: ContactInput;
 };
 
 export type Query = {
   __typename?: 'Query';
-  phones?: Maybe<Array<Maybe<Phone>>>;
+  contacts?: Maybe<Array<Maybe<Contact>>>;
   test?: Maybe<Scalars['String']>;
 };
 
@@ -126,10 +128,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Contact: ResolverTypeWrapper<Contact>;
+  ContactInput: ContactInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Mutation: ResolverTypeWrapper<{}>;
-  Phone: ResolverTypeWrapper<Phone>;
-  PhoneInput: PhoneInput;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
 };
@@ -137,35 +139,36 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  Contact: Contact;
+  ContactInput: ContactInput;
   ID: Scalars['ID'];
   Mutation: {};
-  Phone: Phone;
-  PhoneInput: PhoneInput;
   Query: {};
   String: Scalars['String'];
 };
 
-export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createPhone?: Resolver<Maybe<ResolversTypes['Phone']>, ParentType, ContextType, RequireFields<MutationCreatePhoneArgs, 'input'>>;
-  deletePhone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeletePhoneArgs, 'id'>>;
-  updatePhone?: Resolver<Maybe<ResolversTypes['Phone']>, ParentType, ContextType, RequireFields<MutationUpdatePhoneArgs, 'id' | 'input'>>;
-};
-
-export type PhoneResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Phone'] = ResolversParentTypes['Phone']> = {
+export type ContactResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Contact'] = ResolversParentTypes['Contact']> = {
+  firstname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createContact?: Resolver<Maybe<ResolversTypes['Contact']>, ParentType, ContextType, RequireFields<MutationCreateContactArgs, 'input'>>;
+  deleteContact?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteContactArgs, 'id'>>;
+  updateContact?: Resolver<Maybe<ResolversTypes['Contact']>, ParentType, ContextType, RequireFields<MutationUpdateContactArgs, 'id' | 'input'>>;
+};
+
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  phones?: Resolver<Maybe<Array<Maybe<ResolversTypes['Phone']>>>, ParentType, ContextType>;
+  contacts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Contact']>>>, ParentType, ContextType>;
   test?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = Context> = {
+  Contact?: ContactResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  Phone?: PhoneResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 };
 

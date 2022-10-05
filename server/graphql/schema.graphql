@@ -1,22 +1,24 @@
 
 type Query {
     test: String
-    phones: [Phone]
+    contacts: [Contact]
 }
 
 type Mutation {
-    createPhone(input: PhoneInput!): Phone
-    updatePhone(id: ID!, input:PhoneInput!): Phone
-    deletePhone(id: ID!): String
+    createContact(input: ContactInput!): Contact
+    updateContact(id: ID!, input:ContactInput!): Contact
+    deleteContact(id: ID!): String
 }
 
-type Phone {
+type Contact {
     id: ID
-    name: String!
+    firstname: String!
+    lastname: String!
     number: String!
 }
 
-input PhoneInput {
-    name: String!
+input ContactInput {
+    firstname: String!
+    lastname: String!
     number: String!
 }

@@ -1,31 +1,29 @@
 import { MutationResolvers, QueryResolvers } from "../../generated/graphql"
-import Phone from "../../models/Phone"
+import Contact from "../../models/Contact"
 
 
 const Query :QueryResolvers = {
     test: () => {
         return  "This is only for test"
     },
-    phones: async () => {
-        return await Phone.find();
+    contacts: async () => {
+        return await Contact.find();
     }
 }
 
 const Mutation: MutationResolvers = {
-    createPhone: async(_, args) => {
-        const {name, number} = args.input;
-
-        return await Phone.create({name, number});
+    createContact: async(_, args) => {
+        return await Contact.create(args.input);
     },
-    updatePhone: async(_, args) => {
+    updateContact: async(_, args) => {
         const {id, input} = args;
 
-        return await Phone.findByIdAndUpdate(id, input);
+        return await Contact.findByIdAndUpdate(id, input);
     },
-    deletePhone: async(_, args) => {
+    deleteContact: async(_, args) => {
         const {id} = args;
         
-        await Phone.findByIdAndRemove(id);
+        await Contact.findByIdAndRemove(id);
         return "ok";
     }
     
