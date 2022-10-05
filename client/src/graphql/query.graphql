@@ -24,3 +24,7 @@ mutation UpdateContact($id: ID!, $input: ContactInput!) {
         number
     }
 }
+
+mutation DeleteContact($id: ID!) {
+    deleteContact(id: $id)
+}

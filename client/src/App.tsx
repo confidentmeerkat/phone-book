@@ -20,6 +20,7 @@ import ContactFormDialog, {
 import {
   useContactsQuery,
   useCreateContactMutation,
+  useDeleteContactMutation,
   useUpdateContactMutation,
 } from "./graphql/generates";
 import { useQueryClient } from "@tanstack/react-query";
@@ -28,17 +29,16 @@ function App() {
   const theme = useTheme();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [initialInput, setInitialInput] = useState<Contact>();
-  
+
   const queryClient = useQueryClient();
   const { data: contactsData, isFetching } = useContactsQuery();
-  const {
-    mutate: createContract,
-  } = useCreateContactMutation();
+  const { mutate: createContact } = useCreateContactMutation();
   const { mutate: updateContact } = useUpdateContactMutation();
+  const { mutate: deleteContact } = useDeleteContactMutation();
 
   const handleCreateContact: SubmitFunction = useCallback(
     async (data: Contact) => {
-      await createContract(
+      await createContact(
         { input: data },
         {
           onSuccess: (data) => {
@@ -50,7 +50,7 @@ function App() {
       );
       setDialogOpen(false);
     },
-    [setDialogOpen, createContract]
+    [setDialogOpen, createContact]
   );
 
   const handleUpdateContact: SubmitFunction = useCallback(
@@ -84,7 +84,7 @@ function App() {
 
   const handleAddClicked = () => {
     setHandleSubmit(() => handleCreateContact);
-    setInitialInput({firstname: "", lastname: "", number: ""});
+    setInitialInput({ firstname: "", lastname: "", number: "" });
     setDialogOpen(true);
   };
 
@@ -101,6 +101,19 @@ function App() {
     [handleUpdateContact]
   );
 
+  const handleDeleteContact = useCallback((id: string) => {
+    deleteContact(
+      { id },
+      {
+        onSuccess: () => {
+          queryClient.setQueryData(["Contacts"], ({ contacts }: any) => {
+            return {contacts: contacts.filter(((contact: Contact)  => contact?.id !== id))};
+          });
+        },
+      }
+    );
+  }, []);
+
   const [handleSubmit, setHandleSubmit] = useState<SubmitFunction>(
     () => handleCreateContact
   );
@@ -108,7 +121,6 @@ function App() {
   const handleClose = () => {
     setDialogOpen(false);
   };
-
 
   const items = useMemo(() => {
     return (contactsData?.contacts || []).map((contact) => (
@@ -151,10 +163,12 @@ function App() {
             >
               <Edit />
             </Button>
+
             <Button
               sx={{ minWidth: "32px", padding: theme.spacing(1, 1) }}
               variant="contained"
               color="error"
+              onClick={() => handleDeleteContact(contact?.id as string)}
             >
               <Delete />
             </Button>

@@ -97,6 +97,13 @@ export type UpdateContactMutationVariables = Exact<{
 
 export type UpdateContactMutation = { __typename?: 'Mutation', updateContact?: { __typename?: 'Contact', id?: string | null, firstname: string, lastname: string, number: string } | null };
 
+export type DeleteContactMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteContactMutation = { __typename?: 'Mutation', deleteContact?: string | null };
+
 
 export const ContactsDocument = `
     query Contacts {
@@ -156,5 +163,19 @@ export const useUpdateContactMutation = <
     useMutation<UpdateContactMutation, TError, UpdateContactMutationVariables, TContext>(
       ['UpdateContact'],
       (variables?: UpdateContactMutationVariables) => fetcher<UpdateContactMutation, UpdateContactMutationVariables>(UpdateContactDocument, variables)(),
+      options
+    );
+export const DeleteContactDocument = `
+    mutation DeleteContact($id: ID!) {
+  deleteContact(id: $id)
+}
+    `;
+export const useDeleteContactMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeleteContactMutation, TError, DeleteContactMutationVariables, TContext>) =>
+    useMutation<DeleteContactMutation, TError, DeleteContactMutationVariables, TContext>(
+      ['DeleteContact'],
+      (variables?: DeleteContactMutationVariables) => fetcher<DeleteContactMutation, DeleteContactMutationVariables>(DeleteContactDocument, variables)(),
       options
     );
