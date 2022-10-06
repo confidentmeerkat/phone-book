@@ -55,5 +55,5 @@
     "@graphql-codegen/typescript-operations": "^2.5.3",
     "@graphql-codegen/typescript-react-query": "^4.0.1"
   },
-  "proxy": "http://localhost:3001"
+  "proxy": "http://server:3001"
 }

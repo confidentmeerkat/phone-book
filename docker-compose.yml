@@ -7,6 +7,29 @@ services:
       - 27017:27017
     volumes:
       - mongodb_data_container:/data/db
-
+  server:
+    depends_on:
+      - mongodb_container
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: npm run start
+    container_name: phonebook_server
+    ports:
+      - "3001:3001"
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    command: npm run start
+    container_name: phonebook_client
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules
+      - ./client:/app
 volumes:
   mongodb_data_container:

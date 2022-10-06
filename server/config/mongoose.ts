@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
 
-mongoose.connect('mongodb://127.0.0.1:27017/phonebook');
+mongoose.connect('mongodb://mongodb_container:27017/phonebook');
 
 export default mongoose;
