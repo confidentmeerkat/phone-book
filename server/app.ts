@@ -1,50 +1,41 @@
 import express from "express";
-import testModel from "./models/Test";
 import fs from "fs";
 import resolvers from "./graphql/resolvers";
-import {ApolloServer} from "apollo-server-express";
-import { ApolloServerPluginDrainHttpServer,ApolloServerPluginLandingPageLocalDefault} from "apollo-server-core"
+import { ApolloServer } from "apollo-server-express";
+import {
+  ApolloServerPluginDrainHttpServer,
+  ApolloServerPluginLandingPageLocalDefault,
+} from "apollo-server-core";
 import http from "http";
 import { Resolvers } from "./generated/graphql";
 
+const typeDefs = fs.readFileSync("./graphql/schema.graphql", "utf-8");
 
-const typeDefs = fs.readFileSync("./graphql/schema.graphql", 'utf-8');
-
-export interface Context {
-
-}
+export interface Context {}
 
 async function startApolloServer(typeDefs: string, resolvers: Resolvers) {
-    const app = express();
-    const httpServer = http.createServer(app);
-    const server = new ApolloServer({
-      typeDefs,
-      resolvers,
-      csrfPrevention: true,
-      cache: 'bounded',
-      plugins: [
-        ApolloServerPluginDrainHttpServer({ httpServer }),
-        ApolloServerPluginLandingPageLocalDefault({ embed: true }),
-      ],
-    });
-    await server.start();
-    server.applyMiddleware({ app });
+  const app = express();
+  const httpServer = http.createServer(app);
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    csrfPrevention: true,
+    cache: "bounded",
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      ApolloServerPluginLandingPageLocalDefault({ embed: true }),
+    ],
+  });
+  await server.start();
+  server.applyMiddleware({ app });
 
+  app.listen(3001, () => {
+    console.log("Server is listening to port 3001");
+  });
 
-    app.get("/api/test", async (_, res) => {
-        const test = await testModel.create({text: "abced"})
+  await new Promise<void>((resolve) =>
+    httpServer.listen({ port: 4000 }, resolve)
+  );
+}
 
-        res.json(test);
-    })
-
-
-    app.listen(3001, () => {
-    console.log("Server is listening to port 3001")
-    })
-
-    await new Promise<void>(resolve => httpServer.listen({ port: 4000 }, resolve));
-  }
-
-  startApolloServer(typeDefs, resolvers);
-  
-
+startApolloServer(typeDefs, resolvers);

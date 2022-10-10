@@ -1,6 +1,6 @@
 overwrite: true
 schema:
-  './**/*.graphql':
+  "./**/*.graphql":
     noRequire: true
 documents: null
 generates:
@@ -9,5 +9,5 @@ generates:
       contextType: ../app#Context
     plugins:
       # - add: '/* tslint:disable */'
-      - 'typescript'
-      - 'typescript-resolvers'
+      - "typescript"
+      - "typescript-resolvers"
