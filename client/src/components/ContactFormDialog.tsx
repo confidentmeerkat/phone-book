@@ -6,7 +6,9 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import { ContactModalContext } from "./PhoneBook";
 
 export interface Contact {
   id?: string;
@@ -19,19 +21,13 @@ export interface SubmitFunction {
   (data: Contact): void;
 }
 
-interface Props {
-  open: boolean;
-  initialInput?: Contact;
-  onSubmit: SubmitFunction;
-  onClose: () => void;
-}
-
-const ContactFormDialog: React.FC<Props> = ({
-  open,
-  initialInput,
-  onSubmit,
-  onClose,
-}) => {
+const ContactFormDialog: React.FC = () => {
+  const {
+    closeModal,
+    open,
+    handleSubmit: onSubmit,
+    initialInput,
+  } = useContext(ContactModalContext);
   const {
     register,
     handleSubmit,
@@ -39,9 +35,10 @@ const ContactFormDialog: React.FC<Props> = ({
   } = useForm({ defaultValues: initialInput });
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+    <Dialog open={open} onClose={closeModal}>
+      <form onSubmit={handleSubmit(onSubmit?.current as SubmitFunction)}>
         <DialogTitle>{initialInput?.id ? "Update" : "New"} Contact</DialogTitle>
+
         <DialogContent>
           <TextField
             margin="dense"
@@ -77,7 +74,7 @@ const ContactFormDialog: React.FC<Props> = ({
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={closeModal}>Cancel</Button>
           <Button type="submit">Submit</Button>
         </DialogActions>
       </form>
