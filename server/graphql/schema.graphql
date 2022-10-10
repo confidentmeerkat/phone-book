@@ -1,5 +1,4 @@
 type Query {
-  test: String
   contacts: [Contact]
 }
 
@@ -10,7 +9,7 @@ type Mutation {
 }
 
 type Contact {
-  id: ID
+  id: ID!
   firstname: String!
   lastname: String!
   number: String!
