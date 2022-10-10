@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { createContext, useMemo, useRef, useState } from "react";
 import { useContactsQuery } from "../graphql/generates";
 import ContactFormDialog, {
@@ -67,7 +67,7 @@ const PhoneBook: React.FC = () => {
 
         {isFetching ? (
           "Loading..."
-        ) : (
+        ) : !filteredContacts.length ? <Typography mt={2} variant="h6">No contacts</Typography> : (
           <ContactList list={filteredContacts as Contact[]} />
         )}
       </Container>
