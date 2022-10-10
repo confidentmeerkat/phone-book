@@ -1,30 +1,30 @@
 query Contacts {
-    contacts {
-        id
-        firstname
-        lastname
-        number
-    }
+  contacts {
+    id
+    firstname
+    lastname
+    number
+  }
 }
 
 mutation CreateContact($input: ContactInput!) {
-    createContact(input: $input) {
-        id
-        firstname
-        lastname
-        number
-    }
+  createContact(input: $input) {
+    id
+    firstname
+    lastname
+    number
+  }
 }
 
 mutation UpdateContact($id: ID!, $input: ContactInput!) {
-    updateContact(id: $id, input: $input) {
-        id
-        firstname
-        lastname
-        number
-    }
+  updateContact(id: $id, input: $input) {
+    id
+    firstname
+    lastname
+    number
+  }
 }
 
 mutation DeleteContact($id: ID!) {
-    deleteContact(id: $id)
+  deleteContact(id: $id)
 }
