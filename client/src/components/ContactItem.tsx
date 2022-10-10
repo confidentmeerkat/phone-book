@@ -54,11 +54,11 @@ const ContactItem: React.FC<{ item: Contact }> = ({ item }) => {
     },
     [closeModal, queryClient, updateContact]
   );
-  const handleEditClicked = () => {
+  const handleEditClicked = useCallback(() => {
     setInitialInput(item);
     handleSubmit.current = handleUpdateContact;
     openModal();
-  };
+  }, [openModal, setInitialInput, handleSubmit, handleUpdateContact, item]);
 
   const handleDeleteContact = useCallback(() => {
     deleteContact(
@@ -75,7 +75,7 @@ const ContactItem: React.FC<{ item: Contact }> = ({ item }) => {
         },
       }
     );
-  }, [queryClient, deleteContact]);
+  }, [queryClient, deleteContact, item]);
 
   return (
     <>
