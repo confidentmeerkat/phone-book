@@ -1,5 +1,11 @@
 import { Delete, Edit, Phone } from "@mui/icons-material";
-import { Button, Divider, ListItem, ListItemText, useTheme } from "@mui/material";
+import {
+  Button,
+  Divider,
+  ListItem,
+  ListItemText,
+  useTheme,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useContext } from "react";
@@ -21,10 +27,10 @@ const ContactItem: React.FC<{ item: Contact }> = ({ item }) => {
   const theme = useTheme();
 
   const handleUpdateContact: SubmitFunction = useCallback(
-    async (data: Contact) => {
+    (data: Contact) => {
       const { id, ...rest } = data;
       if (id) {
-        await updateContact(
+        updateContact(
           { id, input: rest },
           {
             onSuccess: (data) => {
@@ -48,31 +54,28 @@ const ContactItem: React.FC<{ item: Contact }> = ({ item }) => {
     },
     [closeModal, queryClient, updateContact]
   );
-  const handleEditClicked = (id: string) => {
+  const handleEditClicked = () => {
     setInitialInput(item);
     handleSubmit.current = handleUpdateContact;
     openModal();
   };
 
-  const handleDeleteContact = useCallback(
-    (id: string) => {
-      deleteContact(
-        { id },
-        {
-          onSuccess: () => {
-            queryClient.setQueryData(["Contacts"], ({ contacts }: any) => {
-              return {
-                contacts: contacts.filter(
-                  (contact: Contact) => contact?.id !== id
-                ),
-              };
-            });
-          },
-        }
-      );
-    },
-    [queryClient, deleteContact]
-  );
+  const handleDeleteContact = useCallback(() => {
+    deleteContact(
+      { id: item?.id as string },
+      {
+        onSuccess: () => {
+          queryClient.setQueryData(["Contacts"], ({ contacts }: any) => {
+            return {
+              contacts: contacts.filter(
+                (contact: Contact) => contact?.id !== item.id
+              ),
+            };
+          });
+        },
+      }
+    );
+  }, [queryClient, deleteContact]);
 
   return (
     <>
@@ -107,7 +110,7 @@ const ContactItem: React.FC<{ item: Contact }> = ({ item }) => {
             }}
             variant="contained"
             color="primary"
-            onClick={() => handleEditClicked(item!.id as string)}
+            onClick={() => handleEditClicked()}
           >
             <Edit />
           </Button>
@@ -116,13 +119,13 @@ const ContactItem: React.FC<{ item: Contact }> = ({ item }) => {
             sx={{ minWidth: "32px", padding: theme.spacing(1, 1) }}
             variant="contained"
             color="error"
-            onClick={() => handleDeleteContact(item!.id as string)}
+            onClick={() => handleDeleteContact()}
           >
             <Delete />
           </Button>
         </Box>
       </ListItem>
-      
+
       <Divider component="li" />
     </>
   );

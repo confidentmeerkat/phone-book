@@ -16,20 +16,20 @@ const PhoneBookHeader: React.FC = () => {
     useContext(ContactModalContext);
 
   const addContact: SubmitFunction = useCallback(
-    async (data: Contact) => {
-      await createContact(
+    (data: Contact) => {
+      createContact(
         { input: data },
         {
           onSuccess: (data) => {
             queryClient.setQueryData(["Contacts"], ({ contacts }: any) => {
-              return { contacts: [...contacts, data.createContact] };
+              return { contacts: [...(contacts || []), data.createContact] };
             });
           },
         }
       );
       closeModal();
     },
-    [ createContact, queryClient, closeModal]
+    [createContact, queryClient, closeModal]
   );
 
   const handleAddClicked = useCallback(() => {
